@@ -35,8 +35,11 @@ public class SecurityConfig {
         http  .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Public endpoints
-                        .requestMatchers("/images/**").permitAll() // Allow access to static images
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/images/**").permitAll() // Allow access to static images// Public routes for signup/login
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")//Allow access to only admin
+                        .requestMatchers("/api/manager/**").hasRole("MANAGER") // Only Manager role can access
+                        .requestMatchers("/api/employee/**").hasAnyRole("MANAGER", "ADMIN","EMPLOYEE") // Managers and Admins can access
                         .anyRequest().authenticated()           // Secured endpoints
                 )
 

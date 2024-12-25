@@ -32,8 +32,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         User user = userEntity.get();
 
-        // Convert roles to authorities
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getRole()));
+
+        // Convert roles to GrantedAuthority objects
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.toString()))
+                .collect(Collectors.toList());
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 @AllArgsConstructor
 public class AuthService {
@@ -19,7 +21,13 @@ public class AuthService {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
+        // Encrypt the password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Assign default roles if none are provided
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            user.setRoles(Set.of("ROLE_USER")); // Default role for new users
+        }
         return userRepository.save(user);
     }
 
